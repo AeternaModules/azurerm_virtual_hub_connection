@@ -26,7 +26,7 @@ EOT
     name                      = string
     remote_virtual_network_id = string
     virtual_hub_id            = string
-    internet_security_enabled = optional(bool, false)
+    internet_security_enabled = optional(bool) # Default: false
     routing = optional(object({
       associated_route_table_id = optional(string)
       inbound_route_map_id      = optional(string)
@@ -35,8 +35,8 @@ EOT
         labels          = optional(set(string))
         route_table_ids = optional(list(string))
       }))
-      static_vnet_local_route_override_criteria   = optional(string, "Contains")
-      static_vnet_propagate_static_routes_enabled = optional(bool, true)
+      static_vnet_local_route_override_criteria   = optional(string) # Default: "Contains"
+      static_vnet_propagate_static_routes_enabled = optional(bool)   # Default: true
       static_vnet_route = optional(object({
         address_prefixes    = optional(set(string))
         name                = optional(string)
