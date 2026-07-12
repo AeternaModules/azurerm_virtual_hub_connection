@@ -22,7 +22,7 @@ resource "azurerm_virtual_hub_connection" "virtual_hub_connections" {
       static_vnet_local_route_override_criteria   = routing.value.static_vnet_local_route_override_criteria
       static_vnet_propagate_static_routes_enabled = routing.value.static_vnet_propagate_static_routes_enabled
       dynamic "static_vnet_route" {
-        for_each = routing.value.static_vnet_route != null ? [routing.value.static_vnet_route] : []
+        for_each = routing.value.static_vnet_route != null ? routing.value.static_vnet_route : []
         content {
           address_prefixes    = static_vnet_route.value.address_prefixes
           name                = static_vnet_route.value.name

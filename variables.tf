@@ -37,29 +37,13 @@ EOT
       }))
       static_vnet_local_route_override_criteria   = optional(string) # Default: "Contains"
       static_vnet_propagate_static_routes_enabled = optional(bool)   # Default: true
-      static_vnet_route = optional(object({
+      static_vnet_route = optional(list(object({
         address_prefixes    = optional(set(string))
         name                = optional(string)
         next_hop_ip_address = optional(string)
-      }))
+      })))
     }))
   }))
-  validation {
-    condition = alltrue([
-      for k, v in var.virtual_hub_connections : (
-        v.routing == null || (v.routing.propagated_route_table == null || (v.routing.propagated_route_table.labels == null || (length(v.routing.propagated_route_table.labels) > 0)))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.virtual_hub_connections : (
-        v.routing == null || (v.routing.static_vnet_route == null || (v.routing.static_vnet_route.name == null || (length(v.routing.static_vnet_route.name) > 0)))
-      )
-    ])
-    error_message = "must not be empty"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_virtual_hub_connection's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
@@ -86,12 +70,18 @@ EOT
   #   source:    [from virtualwans.ValidateRouteMapID] !ok
   # path: routing.outbound_route_map_id
   #   source:    [from virtualwans.ValidateRouteMapID] err != nil
+  # path: routing.propagated_route_table.labels[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
   # path: routing.propagated_route_table.route_table_ids[*]
   #   source:    [from virtualwans.ValidateHubRouteTableID] !ok
   # path: routing.propagated_route_table.route_table_ids[*]
   #   source:    [from virtualwans.ValidateHubRouteTableID] err != nil
   # path: routing.static_vnet_local_route_override_criteria
   #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: routing.static_vnet_route.name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
   # path: routing.static_vnet_route.address_prefixes[*]
   #   source:    validation.IsCIDR(...) - no translation rule yet, add one
   # path: routing.static_vnet_route.next_hop_ip_address
