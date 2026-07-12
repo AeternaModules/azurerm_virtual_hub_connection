@@ -1,3 +1,7 @@
+output "virtual_hub_connections_id" {
+  description = "Map of id values across all virtual_hub_connections, keyed the same as var.virtual_hub_connections"
+  value       = { for k, v in azurerm_virtual_hub_connection.virtual_hub_connections : k => v.id }
+}
 output "virtual_hub_connections_internet_security_enabled" {
   description = "Map of internet_security_enabled values across all virtual_hub_connections, keyed the same as var.virtual_hub_connections"
   value       = { for k, v in azurerm_virtual_hub_connection.virtual_hub_connections : k => v.internet_security_enabled }
